@@ -80,13 +80,13 @@ def main():
                         res = be.host(args.IP)
                     print(json.dumps(res, sort_keys=True, indent=4))
                 elif args.which == 'search':
+                    page = 1
+                    if args.page:
+                        page = int(args.page)
                     if args.image:
-                        res = be.image_search(args.SEARCH)
+                        res = be.image_search(args.SEARCH, page)
                     else:
-                        if args.page:
-                            res = be.host_search(args.SEARCH, args.page)
-                        else:
-                            res = be.host_search(args.SEARCH)
+                        res = be.host_search(args.SEARCH, page)
                     print(json.dumps(res, sort_keys=True, indent=4))
                 else:
                     parser.print_help()
