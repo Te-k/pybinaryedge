@@ -33,6 +33,7 @@ def main():
     parser_b.set_defaults(which='ip')
     parser_c = subparsers.add_parser('search', help='Search in the database')
     parser_c.add_argument('SEARCH', help='Search request')
+    parser_c.add_argument('--page', '-p', help='Get specific page')
     parser_c.add_argument(
         '--image', '-i', action='store_true',
         help='Requests images identified for an IP'
@@ -82,7 +83,10 @@ def main():
                     if args.image:
                         res = be.image_search(args.SEARCH)
                     else:
-                        res = be.host_search(args.SEARCH)
+                        if args.page:
+                            res = be.host_search(args.SEARCH, args.page)
+                        else:
+                            res = be.host_search(args.SEARCH)
                     print(json.dumps(res, sort_keys=True, indent=4))
                 else:
                     parser.print_help()
