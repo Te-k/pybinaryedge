@@ -8,6 +8,12 @@ class BinaryEdgeException(Exception):
         Exception.__init__(self, message)
 
 
+class BinaryEdgeNotFound(BinaryEdgeException):
+    def __init__(self):
+        self.message = 'Search term not found'
+        BinaryEdgeException.__init__(self, self.message)
+
+
 class BinaryEdge(object):
     def __init__(self, key):
         self.key = key
@@ -20,7 +26,10 @@ class BinaryEdge(object):
         if r.status_code == 200:
             return r.json()
         else:
-            raise BinaryEdgeException('Invalid return code %i' % r.status_code)
+            if r.status_code == 404:
+                raise BinaryEdgeNotFound()
+            else:
+                raise BinaryEdgeException('Invalid return code %i' % r.status_code)
 
     def _is_ip(self, ip):
         """

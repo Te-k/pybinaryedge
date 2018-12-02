@@ -1,1 +1,1 @@
-from .api import BinaryEdge
+from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound

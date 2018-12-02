@@ -1,16 +1,25 @@
 # pybinaryedge
 
-Python 3 Wrapper for the binary edge API https://www.binaryedge.io/
+Python 3 Wrapper for the BinaryEdge API https://www.binaryedge.io/. See the [APIv2 documentation](https://docs.binaryedge.io/api-v2/) for more information.
 
-See the [APIv2 documentation](https://docs.binaryedge.io/api-v2/)
+## Installation
 
-## Install
+To install this tool, it is recommended to use [virtual environments](https://docs.python.org/3/tutorial/venv.html).
 
-To install this tool :
+You can install it directly from [pypi](https://pypi.org/) with `pip install pybinaryedge`.
+
+You can Then you can install it directly from sources :
 ```
 git clone https://github.com/Te-k/pybinaryedge.git
 cd pybinaryedge
-pip install -r requirements.txt
+pip install .
+```
+
+If you use [pipenv](https://pipenv.readthedocs.io/en/latest/), you can run instead :
+```
+git clone https://github.com/Te-k/pybinaryedge.git
+cd pybinaryedge
+pipenv install
 ```
 
 You need to have an account on the [Binary Edge platform](https://www.binaryedge.io/), create an API key, and configure the CLI tool to use it with `binaryedge config --key KEY`
@@ -46,19 +55,20 @@ List of functions implemented :
 
 This library also implements a CLI binaryedge tool :
 ```
-binaryedge -h
-usage: binaryedge [-h] {config,ip,search} ...
+usage: binaryedge [-h] {config,ip,search,dataleaks} ...
 
 Request BinaryEdge API
 
 positional arguments:
-  {config,ip,search}  Commands
-    config            Configure pybinary edge
-    ip                Query an IP address
-    search            Search in the database
+  {config,ip,search,dataleaks}
+                        Commands
+    config              Configure pybinary edge
+    ip                  Query an IP address
+    search              Search in the database
+    dataleaks           Search in the leaks database
 
 optional arguments:
-  -h, --help          show this help message and exit
+  -h, --help            show this help message and exit
 ```
 
 Example :

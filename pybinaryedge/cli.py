@@ -3,7 +3,7 @@ import sys
 import json
 import argparse
 import configparser
-from .api import BinaryEdge, BinaryEdgeException
+from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
 
 
 def main():
@@ -40,6 +40,13 @@ def main():
         help='Requests images identified for an IP'
     )
     parser_c.set_defaults(which='search')
+    parser_d = subparsers.add_parser('dataleaks', help='Search in the leaks database')
+    parser_d.add_argument('EMAIL', help='Search email in the leaks database')
+    parser_d.add_argument(
+        '--domain', '-d', action='store_true',
+        help='Search for domain instead of email'
+    )
+    parser_d.set_defaults(which='dataleaks')
     args = parser.parse_args()
 
     configfile = os.path.expanduser('~/.config/binaryedge')
@@ -86,10 +93,18 @@ def main():
                     else:
                         res = be.host_search(args.SEARCH, page=args.page)
                     print(json.dumps(res, sort_keys=True, indent=4))
+                elif args.which == 'dataleaks':
+                    if args.domain:
+                        res = be.dataleaks_organization(args.EMAIL)
+                    else:
+                        res = be.dataleaks_email(args.EMAIL)
+                    print(json.dumps(res, sort_keys=True, indent=4))
                 else:
                     parser.print_help()
             except ValueError as e:
-                print('Invalid Vaue: %s' % e.message)
+                print('Invalid Value: %s' % e.message)
+            except BinaryEdgeNotFound as e:
+                print('Search term not found')
             except BinaryEdgeException as e:
                 print('Error: %s' % e.message)
     else:
