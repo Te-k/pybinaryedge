@@ -64,6 +64,7 @@ This library also implement a command-line interface tool called ``binaryedge`` 
         ip                  Query an IP address
         search              Search in the database
         dataleaks           Search in the leaks database
+	domains             Search information on a domain
 
     optional arguments:
       -h, --help            show this help message and exit

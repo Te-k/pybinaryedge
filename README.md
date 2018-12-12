@@ -50,6 +50,9 @@ List of functions implemented :
 * `dataleaks_email(EMAIL)` : [Verify which dataleaks affect the target email](https://docs.binaryedge.io/api-v2/#v2querydataleaksemailemail)
 * `dataleaks_organization(DOMAIN)` : [Verify how many emails are affected by dataleaks for a specific domain](https://docs.binaryedge.io/api-v2/#v2querydataleaksorganizationdomain)
 * `dataleaks_info()` : [Get the list of dataleaks our platform keeps track.](https://docs.binaryedge.io/api-v2/#v2querydataleaksinfo)
+* `domain_subdomains(DOMAIN, PAGE)` : [Return list of subdomains known from the target domain](https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget)
+* `domain_dns(DOMAIN, PAGE)` : [Return list of dns results known from the target domain.](https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget)
+* `domain_ip(IP, PAGE)` : [Return records that have the specified IP in their A or AAAA records.](https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget)
 
 ## CLI
 
@@ -66,6 +69,7 @@ positional arguments:
     ip                  Query an IP address
     search              Search in the database
     dataleaks           Search in the leaks database
+    domains             Search information on a domain
 
 optional arguments:
   -h, --help            show this help message and exit

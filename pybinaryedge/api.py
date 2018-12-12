@@ -282,3 +282,60 @@ class BinaryEdge(object):
             BinaryEdgeException: if anything else than 200 is returned by BE
         """
         return self._get('query/dataleaks/info')
+
+    def domain_subdomains(self, domain, page=1):
+        """
+        Get a list of known subdomains for this domain
+        https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget
+
+        Args:
+            domain: domain queried
+            page: page result (default is 1)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+        """
+        return self._get(
+            'query/domains/subdomain/' + domain,
+            params={'page': page}
+        )
+
+    def domain_dns(self, domain, page=1):
+        """
+        Return list of dns results known from the target domain.
+        https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget
+
+        Args:
+            domain: domain queried
+            page: page result (default is 1)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+        """
+        return self._get('query/domains/dns/' + domain, params={'page': page})
+
+    def domain_ip(self, ip, page=1):
+        """
+        Return records that have the specified IP in their A or AAAA records.
+        https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget
+
+        Args:
+            IP: IP address queried
+            page: page result (default is 1)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+        """
+        return self._get(
+            'query/domains/ip/' + self._is_ip(ip),
+            params={'page': page}
+        )
