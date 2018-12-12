@@ -61,10 +61,6 @@ def main():
         '--subdomains', '-s', action='store_true',
         help='Returns subdomains'
     )
-    parser_e.add_argument(
-        '--dns', '-d', action='store_true',
-        help='Returns all dns entries for this domain'
-    )
     parser_e.set_defaults(which='domain')
     args = parser.parse_args()
 
