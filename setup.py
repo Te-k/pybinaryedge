@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pybinaryedge',
-    version='0.2',
+    version='0.3',
     description='Python 3 Wrapper for the binary edge API https://www.binaryedge.io/',
     long_description=long_description,
     long_description_content_type="text/markdown",

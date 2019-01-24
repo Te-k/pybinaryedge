@@ -111,8 +111,8 @@ class BinaryEdge(object):
     def host_search(self, query, page=1):
         """
         Events based on a Query. List of recent events for the given query,
-            including details of exposed ports and services. Can be used with
-            specific parameters and/or full-text search.
+        including details of exposed ports and services. Can be used with
+        specific parameters and/or full-text search.
         https://docs.binaryedge.io/api-v2/#v2querysearch
 
         Args:
@@ -338,4 +338,34 @@ class BinaryEdge(object):
         return self._get(
             'query/domains/ip/' + self._is_ip(ip),
             params={'page': page}
+        )
+
+    def stats(self, query, type, page=1):
+        """
+        Statistics of recent events for the given query. Can be used with
+        specific parameters and/or full-text search.
+        https://docs.binaryedge.io/api-v2/#v2querysearchstats
+
+        Args:
+            query: String used to query our data
+            type: Type of statistic we want to obtain. Possible types include:
+                ports, products, versions, tags, services, countries, asn.
+            page: page result (default is 1)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+        """
+        if type not in ['ports', 'products', 'versions', 'tags', 'services',
+                'countries', 'asn']:
+            raise BinaryEdgeException('Invalid type')
+        return self._get(
+            'query/search/stats',
+            params={
+                'query': query,
+                'type': type,
+                'page': page
+            }
         )

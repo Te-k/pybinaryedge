@@ -52,7 +52,8 @@ List of functions implemented :
 * `dataleaks_info()` : [Get the list of dataleaks our platform keeps track.](https://docs.binaryedge.io/api-v2/#v2querydataleaksinfo)
 * `domain_subdomains(DOMAIN, PAGE)` : [Return list of subdomains known from the target domain](https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget)
 * `domain_dns(DOMAIN, PAGE)` : [Return list of dns results known from the target domain.](https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget)
-* `domain_ip(IP, PAGE)` : [Return records that have the specified IP in their A or AAAA records.](https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget)
+* `domain_ip(IP, PAGE)`: [Return records that have the specified IP in their A or AAAA records.](https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget)
+: `stats(QUERY, TYPE, PAGE)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
 
 ## CLI
 
