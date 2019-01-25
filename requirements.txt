@@ -1,2 +1,4 @@
 requests
 configparser
+sphinx
+sphinxcontrib-napoleon
