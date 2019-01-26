@@ -26,6 +26,8 @@ You need to have an account on the [Binary Edge platform](https://www.binaryedge
 
 ## API
 
+See the documentation on [Read the Docs](https://pybinaryedge.readthedocs.io/en/latest/index.html).
+
 Example :
 ```python
 from pybinaryedge import BinaryEdge
