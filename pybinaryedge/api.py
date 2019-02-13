@@ -340,6 +340,86 @@ class BinaryEdge(object):
             params={'page': page}
         )
 
+    def sensor_ip(self, target):
+        """
+        Details about an Scanner. List of recent events form the specified host,
+        including details of scanned ports, payloads and tags.
+        https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget
+
+        Args:
+            target: [String] target IP address or CIDR up to /24
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+            BinaryEdgeNotFound: if the target has not been seen by sensors
+        """
+        return self._get('query/sensors/ip/%s' % target)
+
+    def sensor_search(self, query, page=1):
+        """
+        Events based on a Query. List of recent events for the given query,
+        including details of scanned ports, payloads and tags. Can be used
+        with specific parameters and/or full-text search.
+        https://docs.binaryedge.io/api-v2/#v2querysensorssearch
+
+        Args:
+            query: [String] String used to query our data. If no filters are
+                used, it will perform a full-text search on the entire events
+            page: [Int] Optional. Default 1, Maximum: 500 (10,000 results)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+
+        Example:
+            be.sensor_search('tags:ssh_scanner')
+        """
+        return self._get(
+                'query/sensors/search',
+                params={'query': query, 'page': page}
+        )
+
+    def sensor_search_stats(self, query, type, days=60):
+        """
+        Statistics of events for the given query. Can be used with specific
+        parameters and/or full-text search.
+        https://docs.binaryedge.io/api-v2/#v2querysensorssearchstats
+
+        Args:
+            query: [String] String used to query our data. If no filters are
+                used, it will perform a full-text search on the entire events.
+            type: [String] Type of statistic we want to obtain.
+                Possible types include: ports, tags, countries, asn, ips,
+                payloads, http_path.
+            days: [Integer] Number of days to get the stats for.
+                For example days=1 for the last day of data.
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+                or if type is not correct
+
+        Example:
+            be.sensor_search_stats('tags:ssh_scanner', 'ports')
+        """
+        if type not in ['ports', 'tags', 'countries', 'asn', 'ips',
+                    'payloads', 'http_path']:
+            raise BinaryEdgeException('Invalid type')
+        return self._get('query/sensors/search/stats',
+                params={
+                    'query': query,
+                    'type': type,
+                    'days': days
+                }
+        )
+
     def stats(self, query, type, page=1):
         """
         Statistics of recent events for the given query. Can be used with

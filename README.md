@@ -1,6 +1,6 @@
 # pybinaryedge
 
-Python 3 Wrapper for the BinaryEdge API https://www.binaryedge.io/. See the [APIv2 documentation](https://docs.binaryedge.io/api-v2/) for more information.
+Python 3 Wrapper for the BinaryEdge API https://www.binaryedge.io/. See the [APIv2 documentation](https://docs.binaryedge.io/api-v2/) for more information, or the documentation for this library on [Read the Docs](https://pybinaryedge.readthedocs.io/en/latest/index.html).
 
 ## Installation
 
@@ -55,6 +55,9 @@ List of functions implemented :
 * `domain_subdomains(DOMAIN, PAGE)` : [Return list of subdomains known from the target domain](https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget)
 * `domain_dns(DOMAIN, PAGE)` : [Return list of dns results known from the target domain.](https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget)
 * `domain_ip(IP, PAGE)`: [Return records that have the specified IP in their A or AAAA records.](https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget)
+* `sensor_ip(TARGET)`: [Details about an Scanner. List of recent events form the specified host, including details of scanned ports, payloads and tags.](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
+* `sensor_search(QUERY, PAGE)`: [Events based on a Query.](https://docs.binaryedge.io/api-v2/#v2querysensorssearch)
+* `sensor_search_status(QUERY, TYPE, DAYS)`: [Statistics of events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysensorssearchstats)
 : `stats(QUERY, TYPE, PAGE)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
 
 ## CLI
@@ -96,6 +99,10 @@ $ binaryedge ip -i 149.202.178[.]130
                         "type": "service-simple"
 [SNIP]
 ```
+
+## Changelog
+
+0.4: Add support for [BinaryEdge sensors](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
 
 ## License
 
