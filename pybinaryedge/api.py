@@ -14,6 +14,7 @@
 
 import requests
 import re
+import ipaddress
 
 
 class BinaryEdgeException(Exception):
@@ -55,7 +56,7 @@ class BinaryEdge(object):
 
     def _is_ip(self, ip):
         """
-        Test that the given string is an IPv4 address
+        Test that the given string is an IPv4/IPv6 address or CIDR
 
         Args:
             ip: IP address
@@ -66,10 +67,16 @@ class BinaryEdge(object):
         Raises:
             ValueError: if the string given is not a valid IPv4 address
         """
-        ip = ip.replace("[.]", ".")
-        if not re.match('^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$', ip):
+        try:
+            return str(ipaddress.ip_address(ip))
+        except:
+            pass
+        
+        try:
+            return str(ipaddress.ip_network(ip,strict=False))
+        except:
             raise ValueError('Invalid IP address')
-        return ip
+            
 
     def host(self, ip):
         """
