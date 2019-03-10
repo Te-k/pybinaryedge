@@ -44,6 +44,7 @@ List of functions implemented :
 * `host_historical(IP)` : [Details about an Host, with data up to 6 months](https://docs.binaryedge.io/api-v2/#v2queryiphistoricaltarget)
 * `host_search(QUERY, PAGE)` : [List of recent events for the given query](https://docs.binaryedge.io/api-v2/#v2querysearch)
 * `host_score(IP)` : [IP Scoring of an host.](https://docs.binaryedge.io/api-v2/#v2queryscoreiptarget)
+* `host_vulnerabilities(IP)` : list of CVE vulnerabilities that may affect a host
 * `image_ip(IP)` : [Details about Remote Desktops found on an Host](https://docs.binaryedge.io/api-v2/#v2queryimageipip)
 * `image_search(QUERY, PAGE)` : [Remote Desktops based on a Query](https://docs.binaryedge.io/api-v2/#v2queryimagesearch)
 * `image_tags()` : [Get the list of possible tags for the images](https://docs.binaryedge.io/api-v2/#v2queryimagetags)
@@ -102,7 +103,8 @@ $ binaryedge ip -i 149.202.178[.]130
 
 ## Changelog
 
-0.4: Add support for [BinaryEdge sensors](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
+* 0.5 : improve testing for IP addresses format
+* 0.4: Add support for [BinaryEdge sensors](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
 
 ## License
 

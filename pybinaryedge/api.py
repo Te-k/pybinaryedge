@@ -71,12 +71,12 @@ class BinaryEdge(object):
             return str(ipaddress.ip_address(ip))
         except:
             pass
-        
+
         try:
             return str(ipaddress.ip_network(ip,strict=False))
         except:
             raise ValueError('Invalid IP address')
-            
+
 
     def host(self, ip):
         """
@@ -94,6 +94,21 @@ class BinaryEdge(object):
             BinaryEdgeException: if anything else than 200 is returned by BE
         """
         return self._get('query/ip/' + self._is_ip(ip))
+
+    def host_vulnerabilities(self, ip):
+        """
+        Give list of CVE vulnerabilities that may affect a given IP
+
+        Args:
+            ip: IP address (string)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned by BE
+        """
+        return self._get('query/cve/ip/' + self._is_ip(ip))
 
     def host_historical(self, ip):
         """
