@@ -104,7 +104,7 @@ $ binaryedge ip -i 149.202.178[.]130
 
 ## Changelog
 
-* 0.5 : improve testing for IP addresses format
+* 0.5 : fix bugs in the doc and code. Add support for `host_vulnerabilities`
 * 0.4: Add support for [BinaryEdge sensors](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
 
 ## License
