@@ -44,8 +44,9 @@ Here is a quick example, see the full API documentation for more informationon a
     be = BinaryEdge(API_KEY)
     # Iterate over the first page of IPs having specific ssh configuration
     search = 'ssh.algorithms.encryption.keyword:"aes256-cbc" ssh.banner.keyword:"SSH-2.0-OpenSSH_LeadSec"'
-    for ip in be.host_search(search):
-        print('%s': % ip['origin']['ip'])
+    results = be.host_search(search)
+    for ip in results['events']:
+        print("%s" %(ip['target']['ip']))
 
 
 Command-Line Interface
