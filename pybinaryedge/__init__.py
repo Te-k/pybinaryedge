@@ -1,1 +1,2 @@
-from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
+from .api import (BinaryEdge, BinaryEdgeException,  # noqa: F401
+                  BinaryEdgeNotFound)

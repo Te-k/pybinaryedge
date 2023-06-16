@@ -12,9 +12,11 @@
 
 """
 
-import requests
 import ipaddress
+
+import requests
 import urllib3
+
 
 class BinaryEdgeException(Exception):
     """
@@ -56,7 +58,9 @@ class BinaryEdge(object):
 
     def _get(self, url, params={}):
         headers = {'X-Key': self.key, 'User-Agent': self.ua}
-        r = self.requests.get(self.base_url + url, params=params, headers=headers)
+        r = self.requests.get(
+            self.base_url + url,
+            params=params, headers=headers)
         if r.status_code == 200:
             return r.json()
         else:
@@ -82,12 +86,12 @@ class BinaryEdge(object):
         """
         try:
             return str(ipaddress.ip_address(ip))
-        except:
+        except:  # noqa: E722
             pass
 
         try:
             return str(ipaddress.ip_network(ip, strict=False))
-        except:
+        except:  # noqa: E722
             raise ValueError('Invalid IP address')
 
     def host(self, ip):
@@ -397,8 +401,8 @@ class BinaryEdge(object):
 
     def sensor_ip(self, target):
         """
-        Details about an Scanner. List of recent events form the specified host,
-        including details of scanned ports, payloads and tags.
+        Details about an Scanner. List of recent events form the specified
+        host, including details of scanned ports, payloads and tags.
         https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget
 
         Args:
@@ -464,10 +468,11 @@ class BinaryEdge(object):
         Example:
             be.sensor_search_stats('tags:ssh_scanner', 'ports')
         """
-        if type not in ['ports', 'tags', 'countries', 'asn', 'ips',
-                    'payloads', 'http_path']:
+        if type not in ['ports', 'tags', 'countries', 'asn',
+                        'ips', 'payloads', 'http_path']:
             raise BinaryEdgeException('Invalid type')
-        return self._get('query/sensors/search/stats',
+        return self._get(
+                'query/sensors/search/stats',
                 params={
                     'query': query,
                     'type': type,
@@ -493,8 +498,8 @@ class BinaryEdge(object):
         Raises:
             BinaryEdgeException: if anything else than 200 is returned
         """
-        if type not in ['ports', 'products', 'versions', 'tags', 'services',
-                'countries', 'asn']:
+        if type not in ['ports', 'products', 'versions', 'tags',
+                        'services', 'countries', 'asn']:
             raise BinaryEdgeException('Invalid type')
         return self._get(
             'query/search/stats',

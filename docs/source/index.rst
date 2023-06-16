@@ -6,6 +6,8 @@
 Welcome to pybinaryedge's documentation!
 ========================================
 
+.. automodule:: pybinaryedge.api
+    :members:
 
 Contents:
 

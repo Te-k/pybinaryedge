@@ -1,16 +1,17 @@
-import os
-import sys
-import json
 import argparse
 import configparser
+import json
+import os
+import sys
+
 from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
 
 
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
     parser.add_argument(
-        '--ssl-verify', '-sv', default=True, type=bool,
-        help='Disable or enable SSL verification'
+        '--no-verify', '-nv', action='store_false',
+        help='Disable SSL verification'
     )
     subparsers = parser.add_subparsers(help='Commands')
     parser_a = subparsers.add_parser('config', help='Configure pybinary edge')
@@ -38,13 +39,17 @@ def main():
         '--torrent', '-t', action='store_true',
         help='Request torrents identified for an IP'
     )
-    parser_b.add_argument('--page', '-p', type=int, default=1,
-            help='Get specific page')
+    parser_b.add_argument(
+        '--page', '-p', type=int, default=1,
+        help='Get specific page'
+    )
     parser_b.set_defaults(which='ip')
     parser_c = subparsers.add_parser('search', help='Search in the database')
     parser_c.add_argument('SEARCH', help='Search request')
-    parser_c.add_argument('--page', '-p', type=int, default=1,
-            help='Get specific page')
+    parser_c.add_argument(
+        '--page', '-p', type=int, default=1,
+        help='Get specific page'
+    )
     parser_c.add_argument(
         '--image', '-i', action='store_true',
         help='Search for screenshots and details extracted based on a query'
@@ -54,17 +59,25 @@ def main():
         help='Search for Domains/DNS data based on a query.'
     )
     parser_c.set_defaults(which='search')
-    parser_d = subparsers.add_parser('dataleaks', help='Search in the leaks database')
+    parser_d = subparsers.add_parser(
+        'dataleaks',
+        help='Search in the leaks database'
+    )
     parser_d.add_argument('EMAIL', help='Search email in the leaks database')
     parser_d.add_argument(
         '--domain', '-d', action='store_true',
         help='Search for domain instead of email'
     )
     parser_d.set_defaults(which='dataleaks')
-    parser_e = subparsers.add_parser('domains', help='Search information on a domain')
+    parser_e = subparsers.add_parser(
+        'domains',
+        help='Search information on a domain'
+    )
     parser_e.add_argument('DOMAIN', help='Domain to be requested')
-    parser_e.add_argument('--page', '-p', type=int, default=1,
-            help='Get specific page')
+    parser_e.add_argument(
+        '--page', '-p', type=int, default=1,
+        help='Get specific page'
+    )
     parser_e.add_argument(
         '--subdomains', '-s', action='store_true',
         help='Returns subdomains'
@@ -94,7 +107,10 @@ def main():
             config = configparser.ConfigParser()
             config.read(configfile)
             try:
-                be = BinaryEdge(config['BinaryEdge']['key'], not args.ssl_verify)
+                be = BinaryEdge(
+                    config['BinaryEdge']['key'],
+                    args.no_verify
+                )
                 if args.which == 'ip':
                     if args.score:
                         res = be.host_score(args.IP)
@@ -136,7 +152,7 @@ def main():
                     parser.print_help()
             except ValueError as e:
                 print('Invalid Value: %s' % e.message)
-            except BinaryEdgeNotFound as e:
+            except BinaryEdgeNotFound:
                 print('Search term not found')
             except BinaryEdgeException as e:
                 print('Error: %s' % e.message)
