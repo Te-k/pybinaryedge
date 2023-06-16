@@ -8,6 +8,10 @@ from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
 
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
+    parser.add_argument(
+        '--ssl-verify', '-sv', default=True, type=bool,
+        help='Disable or enable SSL verification'
+    )
     subparsers = parser.add_subparsers(help='Commands')
     parser_a = subparsers.add_parser('config', help='Configure pybinary edge')
     parser_a.add_argument('--key', '-k', help='Configure the API key')
@@ -43,7 +47,12 @@ def main():
             help='Get specific page')
     parser_c.add_argument(
         '--image', '-i', action='store_true',
-        help='Requests images identified for an IP'
+        help='Search for screenshots and details extracted from them for the given query, including OCR and whether '
+             'faces were found or not.'
+    )
+    parser_c.add_argument(
+        '--domains', '-d', action='store_true',
+        help='Search for Domains/DNS data based on a query.'
     )
     parser_c.set_defaults(which='search')
     parser_d = subparsers.add_parser('dataleaks', help='Search in the leaks database')
@@ -86,7 +95,7 @@ def main():
             config = configparser.ConfigParser()
             config.read(configfile)
             try:
-                be = BinaryEdge(config['BinaryEdge']['key'])
+                be = BinaryEdge(config['BinaryEdge']['key'], not args.ssl_verify)
                 if args.which == 'ip':
                     if args.score:
                         res = be.host_score(args.IP)

@@ -13,14 +13,14 @@
 """
 
 import requests
-import re
 import ipaddress
-
+import urllib3
 
 class BinaryEdgeException(Exception):
     """
     Exception raised if a request to BinaryEdge returns anything else than 200
     """
+
     def __init__(self, message):
         self.message = message
         Exception.__init__(self, message)
@@ -30,20 +30,33 @@ class BinaryEdgeNotFound(BinaryEdgeException):
     """
     Exception raised if a request to BinaryEdge returns a 404 code
     """
+
     def __init__(self):
         self.message = 'Search term not found'
         BinaryEdgeException.__init__(self, self.message)
 
 
 class BinaryEdge(object):
-    def __init__(self, key):
+    """
+    Initializes a new instance of the BinaryEdge class.
+
+    Args:
+        key: The BinaryEdge API key
+        verify: Enable or disable SSL verification. Default is enabled.
+    """
+
+    def __init__(self, key, verify=True):
         self.key = key
         self.base_url = 'https://api.binaryedge.io/v2/'
         self.ua = 'pybinaryedge https://github.com/Te-k/pybinaryedge'
+        self.requests = requests.Session()
+        self.requests.verify = verify
+        if not verify:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     def _get(self, url, params={}):
         headers = {'X-Key': self.key, 'User-Agent': self.ua}
-        r = requests.get(self.base_url + url, params=params, headers=headers)
+        r = self.requests.get(self.base_url + url, params=params, headers=headers)
         if r.status_code == 200:
             return r.json()
         else:
@@ -73,10 +86,9 @@ class BinaryEdge(object):
             pass
 
         try:
-            return str(ipaddress.ip_network(ip,strict=False))
+            return str(ipaddress.ip_network(ip, strict=False))
         except:
             raise ValueError('Invalid IP address')
-
 
     def host(self, ip):
         """
@@ -151,10 +163,10 @@ class BinaryEdge(object):
 
     def host_score(self, ip):
         """
-        IP Scoring of an host. Scoring is based on all information found on
-        our databases regarding an IP and refers to the level of exposure
-        of a target, i.e, the higher the score, the greater the risk exposure
-        https://docs.binaryedge.io/api-v2/#v2queryscoreiptarget
+        IP Risk Score. Scoring is based on all information found on our
+        databases regarding an IP and refers to the level of exposure of
+        a target, i.e, the higher the score, the greater the risk of
+        exposure. https://docs.binaryedge.io/api-v2/#v2queryscoreiptarget
 
         Args:
             ip: IPv4 address
@@ -362,6 +374,27 @@ class BinaryEdge(object):
             params={'page': page}
         )
 
+    def domain_search(self, query, page=1):
+        """
+        List of Domains/DNS data based on a Query.
+        Can be used with specific parameters and/or full-text search.
+        https://docs.binaryedge.io/api-v2/#v2querydomainssearch
+
+        Args:
+            query: Search query in BinaryEdge
+            page: page result (default is 1)
+
+        Returns:
+            A dict created from the JSON returned by BinaryEdge
+
+        Raises:
+            BinaryEdgeException: if anything else than 200 is returned
+        """
+        return self._get(
+            'query/domains/search',
+            params={'query': query, 'page': page}
+        )
+
     def sensor_ip(self, target):
         """
         Details about an Scanner. List of recent events form the specified host,
@@ -402,8 +435,8 @@ class BinaryEdge(object):
             be.sensor_search('tags:ssh_scanner')
         """
         return self._get(
-                'query/sensors/search',
-                params={'query': query, 'page': page}
+            'query/sensors/search',
+            params={'query': query, 'page': page}
         )
 
     def sensor_search_stats(self, query, type, days=60):
