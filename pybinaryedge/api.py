@@ -13,6 +13,7 @@
 """
 
 import ipaddress
+from typing import Any, Dict
 
 import requests
 import urllib3
@@ -23,7 +24,7 @@ class BinaryEdgeException(Exception):
     Exception raised if a request to BinaryEdge returns anything else than 200
     """
 
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
         Exception.__init__(self, message)
 
@@ -47,7 +48,7 @@ class BinaryEdge(object):
         verify: Enable or disable SSL verification. Default is enabled.
     """
 
-    def __init__(self, key, verify=True):
+    def __init__(self, key: str, verify: bool = True):
         self.key = key
         self.base_url = 'https://api.binaryedge.io/v2/'
         self.ua = 'pybinaryedge https://github.com/Te-k/pybinaryedge'
@@ -56,7 +57,7 @@ class BinaryEdge(object):
         if not verify:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    def _get(self, url, params={}):
+    def _get(self, url: str, params: Dict[str, Any] = {}):
         headers = {'X-Key': self.key, 'User-Agent': self.ua}
         r = self.requests.get(
             self.base_url + url,
@@ -71,7 +72,7 @@ class BinaryEdge(object):
                     'Invalid return code %i' % r.status_code
                 )
 
-    def _is_ip(self, ip):
+    def _is_ip(self, ip: str) -> str:
         """
         Test that the given string is an IPv4/IPv6 address or CIDR
 
@@ -94,7 +95,7 @@ class BinaryEdge(object):
         except:  # noqa: E722
             raise ValueError('Invalid IP address')
 
-    def host(self, ip):
+    def host(self, ip: str) -> Dict[str, Any]:
         """
         Details about an Host. List of recent events for the specified host,
         including details of exposed ports and services.
@@ -111,7 +112,7 @@ class BinaryEdge(object):
         """
         return self._get('query/ip/' + self._is_ip(ip))
 
-    def host_vulnerabilities(self, ip):
+    def host_vulnerabilities(self, ip: str) -> Dict[str, Any]:
         """
         Give list of CVE vulnerabilities that may affect a given IP
 
@@ -126,7 +127,7 @@ class BinaryEdge(object):
         """
         return self._get('query/cve/ip/' + self._is_ip(ip))
 
-    def host_historical(self, ip):
+    def host_historical(self, ip: str) -> Dict[str, Any]:
         """
         Details about an Host, with data up to 6 months.
         List of events for the specified host, with events for each time that:
@@ -146,7 +147,7 @@ class BinaryEdge(object):
         """
         return self._get('query/ip/historical/' + self._is_ip(ip))
 
-    def host_search(self, query, page=1):
+    def host_search(self, query: str, page: int = 1) -> Dict[str, Any]:
         """
         Events based on a Query. List of recent events for the given query,
         including details of exposed ports and services. Can be used with
@@ -165,7 +166,7 @@ class BinaryEdge(object):
         """
         return self._get('query/search', params={'query': query, 'page': page})
 
-    def host_score(self, ip):
+    def host_score(self, ip: str) -> Dict[str, Any]:
         """
         IP Risk Score. Scoring is based on all information found on our
         databases regarding an IP and refers to the level of exposure of
@@ -183,7 +184,7 @@ class BinaryEdge(object):
         """
         return self._get('query/score/ip/' + self._is_ip(ip))
 
-    def image_ip(self, ip):
+    def image_ip(self, ip: str) -> Dict[str, Any]:
         """
         Details about Remote Desktops found on an Host. List of screenshots
         and details extracted from them for the specified host, including OCR
@@ -201,7 +202,7 @@ class BinaryEdge(object):
         """
         return self._get('query/image/ip/' + self._is_ip(ip))
 
-    def image_search(self, query, page=1):
+    def image_search(self, query: str, page: int = 1) -> Dict[str, Any]:
         """
         Remote Desktops based on a Query. List of screenshots and details
         extracted from them for the given query, including OCR and whether
@@ -224,7 +225,7 @@ class BinaryEdge(object):
             params={'query': query, 'page': page}
         )
 
-    def image_tags(self):
+    def image_tags(self) -> Dict[str, Any]:
         """
         Get the list of possible tags for the images
         https://docs.binaryedge.io/api-v2/#v2queryimagetags
@@ -237,7 +238,7 @@ class BinaryEdge(object):
         """
         return self._get('query/image/tags')
 
-    def torrent_ip(self, ip):
+    def torrent_ip(self, ip: str) -> Dict[str, Any]:
         """
         Details about torrents transferred by an Host. List of recent
         torrent events for the specified host, including details of the
@@ -255,7 +256,7 @@ class BinaryEdge(object):
         """
         return self._get('query/torrent/ip/' + self._is_ip(ip))
 
-    def torrent_historical_ip(self, ip):
+    def torrent_historical_ip(self, ip: str) -> Dict[str, Any]:
         """
         Details about torrents transferred by an Host, with data up to 6 months
         List of torrent events for the specified host, with events for each
@@ -273,7 +274,7 @@ class BinaryEdge(object):
         """
         return self._get('query/torrent/historical/' + self._is_ip(ip))
 
-    def dataleaks_email(self, email):
+    def dataleaks_email(self, email: str) -> Dict[str, Any]:
         """
         Allows you to search across multiple data breaches to see if any of
         your email addresses has been compromised.
@@ -291,7 +292,7 @@ class BinaryEdge(object):
         """
         return self._get('query/dataleaks/email/' + email)
 
-    def dataleaks_organization(self, domain):
+    def dataleaks_organization(self, domain: str) -> Dict[str, Any]:
         """
         Verify how may emails are affected by dataleaks for a specific domain
         We don't provide the list of affected emails.
@@ -308,7 +309,7 @@ class BinaryEdge(object):
         """
         return self._get('query/dataleaks/organization/' + domain)
 
-    def dataleaks_info(self):
+    def dataleaks_info(self) -> Dict[str, Any]:
         """
         Get the list of dataleaks our platform keeps track.
         https://docs.binaryedge.io/api-v2/#v2querydataleaksinfo
@@ -321,7 +322,7 @@ class BinaryEdge(object):
         """
         return self._get('query/dataleaks/info')
 
-    def domain_subdomains(self, domain, page=1):
+    def domain_subdomains(self, domain: str, page: int = 1) -> Dict[str, Any]:
         """
         Get a list of known subdomains for this domain
         https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget
@@ -341,7 +342,7 @@ class BinaryEdge(object):
             params={'page': page}
         )
 
-    def domain_dns(self, domain, page=1):
+    def domain_dns(self, domain: str, page: int = 1) -> Dict[str, Any]:
         """
         Return list of dns results known from the target domain.
         https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget
@@ -358,7 +359,7 @@ class BinaryEdge(object):
         """
         return self._get('query/domains/dns/' + domain, params={'page': page})
 
-    def domain_ip(self, ip, page=1):
+    def domain_ip(self, ip: str, page: int = 1) -> Dict[str, Any]:
         """
         Return records that have the specified IP in their A or AAAA records.
         https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget
@@ -378,7 +379,7 @@ class BinaryEdge(object):
             params={'page': page}
         )
 
-    def domain_search(self, query, page=1):
+    def domain_search(self, query: str, page: int = 1) -> Dict[str, Any]:
         """
         List of Domains/DNS data based on a Query.
         Can be used with specific parameters and/or full-text search.
@@ -399,7 +400,7 @@ class BinaryEdge(object):
             params={'query': query, 'page': page}
         )
 
-    def sensor_ip(self, target):
+    def sensor_ip(self, target: str) -> Dict[str, Any]:
         """
         Details about an Scanner. List of recent events form the specified
         host, including details of scanned ports, payloads and tags.
@@ -417,7 +418,7 @@ class BinaryEdge(object):
         """
         return self._get('query/sensors/ip/%s' % target)
 
-    def sensor_search(self, query, page=1):
+    def sensor_search(self, query: str, page: int = 1) -> Dict[str, Any]:
         """
         Events based on a Query. List of recent events for the given query,
         including details of scanned ports, payloads and tags. Can be used
@@ -443,7 +444,8 @@ class BinaryEdge(object):
                 params={'query': query, 'page': page}
         )
 
-    def sensor_search_stats(self, query, type, days=60):
+    def sensor_search_stats(self, query: str, type: str, days: int = 60) \
+            -> Dict[str, Any]:
         """
         Statistics of events for the given query. Can be used with specific
         parameters and/or full-text search.
@@ -480,7 +482,7 @@ class BinaryEdge(object):
                 }
         )
 
-    def stats(self, query, type, page=1):
+    def stats(self, query: str, type: str, page: int = 1) -> Dict[str, Any]:
         """
         Statistics of recent events for the given query. Can be used with
         specific parameters and/or full-text search.

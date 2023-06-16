@@ -3,6 +3,7 @@ PWD = $(shell pwd)
 check:
 	flake8
 	ruff check -q .
+	mypy pybinaryedge
 
 clean:
 	rm -rf $(PWD)/build $(PWD)/dist $(PWD)/pybinaryedge.egg-info
