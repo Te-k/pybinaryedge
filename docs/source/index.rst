@@ -6,17 +6,12 @@
 Welcome to pybinaryedge's documentation!
 ========================================
 
-.. automodule:: pybinaryedge.api
-    :members:
-
-Contents:
+Content:
 
 .. toctree::
-   :maxdepth: 4
 
-   howto
-   pybinaryedge
-
+    home
+    api
 
 
 Indices and tables
