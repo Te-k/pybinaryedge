@@ -167,10 +167,14 @@ def main():
                         if hasattr(args, 'page'):
                             args.page = current_page + 1
                         res = process_args(client=be, args=args)
+                        if len(res['events']) == 0:
+                            break
                         print(json.dumps(res, **jsonArgs))
-
                         if 'pagesize' not in res:
                             break
+                        if 'events' not in res:
+                            break
+
                 else:
                     parser.print_help()
             except ValueError as e:
