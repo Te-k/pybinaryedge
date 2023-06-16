@@ -435,8 +435,8 @@ class BinaryEdge(object):
             be.sensor_search('tags:ssh_scanner')
         """
         return self._get(
-            'query/sensors/search',
-            params={'query': query, 'page': page}
+                'query/sensors/search',
+                params={'query': query, 'page': page}
         )
 
     def sensor_search_stats(self, query, type, days=60):
