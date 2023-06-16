@@ -3,18 +3,65 @@ import configparser
 import json
 import os
 import sys
+from typing import Dict, Any
 
 from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
+
+
+def process_args(client: BinaryEdge, args) -> Dict[str, Any]:
+    res = None
+    if args.which == 'ip':
+        if args.score:
+            res = client.host_score(args.IP)
+        elif args.image:
+            res = client.image_ip(args.IP)
+        elif args.torrent:
+            if args.historical:
+                res = client.torrent_historical_ip(args.IP)
+            else:
+                res = client.torrent_ip(args.IP)
+        elif args.historical:
+            res = client.host_historical(args.IP)
+        elif args.dns:
+            res = client.domain_ip(args.IP, page=args.page)
+        else:
+            res = client.host(args.IP)
+    elif args.which == 'search':
+        if args.image:
+            res = client.image_search(args.SEARCH, page=args.page)
+        elif args.domains:
+            res = client.domain_search(args.SEARCH, page=args.page)
+        else:
+            res = client.host_search(args.SEARCH, page=args.page)
+    elif args.which == 'dataleaks':
+        if args.domain:
+            res = client.dataleaks_organization(args.EMAIL)
+        else:
+            res = client.dataleaks_email(args.EMAIL)
+    elif args.which == 'domain':
+        if args.subdomains:
+            res = client.domain_subdomains(args.DOMAIN, page=args.page)
+        else:
+            res = client.domain_dns(args.DOMAIN, page=args.page)
+    return res
 
 
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
     parser.add_argument(
-        '--no-verify', '-nv', action='store_false',
+        '--no-verify', action='store_false',
         help='Disable SSL verification'
     )
+    parser.add_argument(
+        '--pages', type=int, default=-2,
+        help='Enables pagination until the supplied page'
+    )
+    parser.add_argument(
+        '--no-pretty', action='store_false', help='Non-prettified output'
+    )
     subparsers = parser.add_subparsers(help='Commands')
-    parser_a = subparsers.add_parser('config', help='Configure pybinary edge')
+    parser_a = subparsers.add_parser('config',
+                                     help='Configure pybinary edge')
     parser_a.add_argument('--key', '-k', help='Configure the API key')
     parser_a.set_defaults(which='config')
     parser_b = subparsers.add_parser('ip', help='Query an IP address')
@@ -111,43 +158,19 @@ def main():
                     config['BinaryEdge']['key'],
                     args.no_verify
                 )
-                if args.which == 'ip':
-                    if args.score:
-                        res = be.host_score(args.IP)
-                    elif args.image:
-                        res = be.image_ip(args.IP)
-                    elif args.torrent:
-                        if args.historical:
-                            res = be.torrent_historical_ip(args.IP)
-                        else:
-                            res = be.torrent_ip(args.IP)
-                    elif args.historical:
-                        res = be.host_historical(args.IP)
-                    elif args.dns:
-                        res = be.domain_ip(args.IP, page=args.page)
-                    else:
-                        res = be.host(args.IP)
-                    print(json.dumps(res, sort_keys=True, indent=4))
-                elif args.which == 'search':
-                    if args.image:
-                        res = be.image_search(args.SEARCH, page=args.page)
-                    elif args.domains:
-                        res = be.domain_search(args.SEARCH, page=args.page)
-                    else:
-                        res = be.host_search(args.SEARCH, page=args.page)
-                    print(json.dumps(res, sort_keys=True, indent=4))
-                elif args.which == 'dataleaks':
-                    if args.domain:
-                        res = be.dataleaks_organization(args.EMAIL)
-                    else:
-                        res = be.dataleaks_email(args.EMAIL)
-                    print(json.dumps(res, sort_keys=True, indent=4))
-                elif args.which == 'domain':
-                    if args.subdomains:
-                        res = be.domain_subdomains(args.DOMAIN, page=args.page)
-                    else:
-                        res = be.domain_dns(args.DOMAIN, page=args.page)
-                    print(json.dumps(res, sort_keys=True, indent=4))
+                jsonArgs = {'sort_keys': True, 'indent': 4} if args.no_pretty else {}
+                if args.which in ['ip', 'search', 'dataleaks', 'domain']:
+                    page = 1
+                    if args.page and args.pages != -2:
+                        page = args.pages
+                    for current_page in range(0, page):
+                        if hasattr(args, 'page'):
+                            args.page = current_page + 1
+                        res = process_args(client=be, args=args)
+                        print(json.dumps(res, **jsonArgs))
+
+                        if 'pagesize' not in res:
+                            break
                 else:
                     parser.print_help()
             except ValueError as e:

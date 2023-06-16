@@ -40,15 +40,15 @@ class BinaryEdgeNotFound(BinaryEdgeException):
 
 
 class BinaryEdge(object):
-    """
-    Initializes a new instance of the BinaryEdge class.
-
-    Args:
-        key: The BinaryEdge API key
-        verify: Enable or disable SSL verification. Default is enabled.
-    """
-
     def __init__(self, key: str, verify: bool = True):
+        """
+        Initializes a new instance of the BinaryEdge class.
+
+        Args:
+            key: The BinaryEdge API key
+            verify: Enable or disable SSL verification. Default is enabled.
+        """
+
         self.key = key
         self.base_url = 'https://api.binaryedge.io/v2/'
         self.ua = 'pybinaryedge https://github.com/Te-k/pybinaryedge'
@@ -87,12 +87,12 @@ class BinaryEdge(object):
         """
         try:
             return str(ipaddress.ip_address(ip))
-        except:  # noqa: E722
+        except ValueError:
             pass
 
         try:
             return str(ipaddress.ip_network(ip, strict=False))
-        except:  # noqa: E722
+        except ValueError:
             raise ValueError('Invalid IP address')
 
     def host(self, ip: str) -> Dict[str, Any]:

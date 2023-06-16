@@ -67,12 +67,12 @@ List of functions implemented :
 
 This library also implements a CLI binaryedge tool :
 ```
-usage: binaryedge [-h] {config,ip,search,dataleaks} ...
+usage: binaryedge [-h] [--no-verify] [--pages PAGES] [--no-pretty] {config,ip,search,dataleaks,domains} ...
 
 Request BinaryEdge API
 
 positional arguments:
-  {config,ip,search,dataleaks}
+  {config,ip,search,dataleaks,domains}
                         Commands
     config              Configure pybinary edge
     ip                  Query an IP address
@@ -80,8 +80,11 @@ positional arguments:
     dataleaks           Search in the leaks database
     domains             Search information on a domain
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  --no-verify           Disable SSL verification
+  --pages PAGES         Enables pagination until the supplied page
+  --no-pretty           Non-prettified output
 ```
 
 Example :
