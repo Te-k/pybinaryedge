@@ -159,7 +159,7 @@ def main():
                     args.no_verify
                 )
                 jsonArgs = {'sort_keys': True, 'indent': 4} if args.no_pretty else {}
-                if args.which in ['ip', 'search', 'dataleaks', 'domain']:
+                if args.which in ['ip', 'search', 'dataleaks', 'domains']:
                     page = 1
                     if args.page and args.pages != -2:
                         page = args.pages
