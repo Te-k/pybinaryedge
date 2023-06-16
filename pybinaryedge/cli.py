@@ -47,8 +47,7 @@ def main():
             help='Get specific page')
     parser_c.add_argument(
         '--image', '-i', action='store_true',
-        help='Search for screenshots and details extracted from them for the given query, including OCR and whether '
-             'faces were found or not.'
+        help='Search for screenshots and details extracted based on a query'
     )
     parser_c.add_argument(
         '--domains', '-d', action='store_true',
