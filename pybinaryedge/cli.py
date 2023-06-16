@@ -116,7 +116,7 @@ def main():
                 elif args.which == 'search':
                     if args.image:
                         res = be.image_search(args.SEARCH, page=args.page)
-                    elif args.domain:
+                    elif args.domains:
                         res = be.domain_search(args.SEARCH, page=args.page)
                     else:
                         res = be.host_search(args.SEARCH, page=args.page)
