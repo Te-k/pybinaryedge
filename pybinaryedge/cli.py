@@ -62,7 +62,7 @@ def main():
     )
     parser_c.add_argument(
         '--max-pages', '-mp', type=int, default=1,
-        help='Max pages. Paginates from --page to --max-page.'
+        help='Paginates from --page to --max-page.'
     )
     parser_c.add_argument(
         '--image', '-i', action='store_true',
