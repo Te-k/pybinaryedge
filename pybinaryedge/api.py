@@ -512,7 +512,8 @@ class BinaryEdge(object):
 
 
 class BinaryEdgePaginated(BinaryEdge):
-    def _paginate(self, function: Callable, args: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
+    def _paginate(self, function: Callable,
+                  args: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
         start_page = args.get('page')
         max_pages = args.get('max_pages') + 1
         del args['max_pages']
