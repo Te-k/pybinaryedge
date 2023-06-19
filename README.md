@@ -64,6 +64,9 @@ List of functions implemented :
 * `stats(QUERY, TYPE, PAGE)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
 
 ## Pagination Support
+
+**Note:** BinaryEdge has a limit on pages. You can check the maximum page count in the API documentation. 
+
 Example :
 ```python
 from pybinaryedge import BinaryEdgePaginated
