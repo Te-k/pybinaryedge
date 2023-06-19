@@ -8,6 +8,7 @@ from collections.abc import Iterator
 from .api import BinaryEdgeException, BinaryEdgeNotFound, \
     BinaryEdgePaginated
 
+
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
     parser.add_argument(
