@@ -91,14 +91,7 @@ class BinaryEdge(object):
         except ValueError:
             pass
 
-<<<<<<< HEAD
         return str(ipaddress.ip_network(ip, strict=False))
-=======
-        try:
-            return str(ipaddress.ip_network(ip, strict=False))
-        except ValueError:
-            raise ValueError('Invalid IP address')
->>>>>>> 0fd71f3bd20798dc39c6e657bd986c3e7e3e5efa
 
     def host(self, ip: str) -> Dict[str, Any]:
         """
