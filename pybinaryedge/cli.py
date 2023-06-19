@@ -8,45 +8,6 @@ from collections.abc import Iterator
 from .api import BinaryEdgeException, BinaryEdgeNotFound, \
     BinaryEdgePaginated
 
-
-def process_args(client: BinaryEdge, args) -> Dict[str, Any]:
-    res = None
-    if args.which == 'ip':
-        if args.score:
-            res = client.host_score(args.IP)
-        elif args.image:
-            res = client.image_ip(args.IP)
-        elif args.torrent:
-            if args.historical:
-                res = client.torrent_historical_ip(args.IP)
-            else:
-                res = client.torrent_ip(args.IP)
-        elif args.historical:
-            res = client.host_historical(args.IP)
-        elif args.dns:
-            res = client.domain_ip(args.IP, page=args.page)
-        else:
-            res = client.host(args.IP)
-    elif args.which == 'search':
-        if args.image:
-            res = client.image_search(args.SEARCH, page=args.page)
-        elif args.domains:
-            res = client.domain_search(args.SEARCH, page=args.page)
-        else:
-            res = client.host_search(args.SEARCH, page=args.page)
-    elif args.which == 'dataleaks':
-        if args.domain:
-            res = client.dataleaks_organization(args.EMAIL)
-        else:
-            res = client.dataleaks_email(args.EMAIL)
-    elif args.which == 'domain':
-        if args.subdomains:
-            res = client.domain_subdomains(args.DOMAIN, page=args.page)
-        else:
-            res = client.domain_dns(args.DOMAIN, page=args.page)
-    return res
-
-
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
     parser.add_argument(
