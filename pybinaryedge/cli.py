@@ -3,18 +3,62 @@ import configparser
 import json
 import os
 import sys
+from collections.abc import Iterator
 
-from .api import BinaryEdge, BinaryEdgeException, BinaryEdgeNotFound
+from .api import BinaryEdgeException, BinaryEdgeNotFound, \
+    BinaryEdgePaginated
+
+
+def process_args(client: BinaryEdge, args) -> Dict[str, Any]:
+    res = None
+    if args.which == 'ip':
+        if args.score:
+            res = client.host_score(args.IP)
+        elif args.image:
+            res = client.image_ip(args.IP)
+        elif args.torrent:
+            if args.historical:
+                res = client.torrent_historical_ip(args.IP)
+            else:
+                res = client.torrent_ip(args.IP)
+        elif args.historical:
+            res = client.host_historical(args.IP)
+        elif args.dns:
+            res = client.domain_ip(args.IP, page=args.page)
+        else:
+            res = client.host(args.IP)
+    elif args.which == 'search':
+        if args.image:
+            res = client.image_search(args.SEARCH, page=args.page)
+        elif args.domains:
+            res = client.domain_search(args.SEARCH, page=args.page)
+        else:
+            res = client.host_search(args.SEARCH, page=args.page)
+    elif args.which == 'dataleaks':
+        if args.domain:
+            res = client.dataleaks_organization(args.EMAIL)
+        else:
+            res = client.dataleaks_email(args.EMAIL)
+    elif args.which == 'domain':
+        if args.subdomains:
+            res = client.domain_subdomains(args.DOMAIN, page=args.page)
+        else:
+            res = client.domain_dns(args.DOMAIN, page=args.page)
+    return res
 
 
 def main():
     parser = argparse.ArgumentParser(description='Request BinaryEdge API')
     parser.add_argument(
-        '--no-verify', '-nv', action='store_false',
+        '--no-verify', action='store_false',
         help='Disable SSL verification'
     )
+    parser.add_argument(
+        '--no-pretty', action='store_false', help='Non-prettified output'
+    )
     subparsers = parser.add_subparsers(help='Commands')
-    parser_a = subparsers.add_parser('config', help='Configure pybinary edge')
+    parser_a = subparsers.add_parser('config',
+                                     help='Configure pybinary edge')
     parser_a.add_argument('--key', '-k', help='Configure the API key')
     parser_a.set_defaults(which='config')
     parser_b = subparsers.add_parser('ip', help='Query an IP address')
@@ -43,12 +87,20 @@ def main():
         '--page', '-p', type=int, default=1,
         help='Get specific page'
     )
+    parser_b.add_argument(
+        '--max-pages', '-mp', type=int, default=1,
+        help='Paginates from --page to --max-page'
+    )
     parser_b.set_defaults(which='ip')
     parser_c = subparsers.add_parser('search', help='Search in the database')
     parser_c.add_argument('SEARCH', help='Search request')
     parser_c.add_argument(
         '--page', '-p', type=int, default=1,
         help='Get specific page'
+    )
+    parser_c.add_argument(
+        '--max-pages', '-mp', type=int, default=1,
+        help='Max pages. Paginates from --page to --max-page.'
     )
     parser_c.add_argument(
         '--image', '-i', action='store_true',
@@ -79,6 +131,10 @@ def main():
         help='Get specific page'
     )
     parser_e.add_argument(
+        '--max-pages', '-mp', type=int, default=1,
+        help='Paginates from --page to --max-page.'
+    )
+    parser_e.add_argument(
         '--subdomains', '-s', action='store_true',
         help='Returns subdomains'
     )
@@ -107,10 +163,13 @@ def main():
             config = configparser.ConfigParser()
             config.read(configfile)
             try:
-                be = BinaryEdge(
+                if args.which not in ['ip', 'search', 'dataleaks', 'domain']:
+                    parser.print_help()
+                be = BinaryEdgePaginated(
                     config['BinaryEdge']['key'],
-                    args.no_verify
+                    args.no_verify,
                 )
+                res = None
                 if args.which == 'ip':
                     if args.score:
                         res = be.host_score(args.IP)
@@ -124,32 +183,39 @@ def main():
                     elif args.historical:
                         res = be.host_historical(args.IP)
                     elif args.dns:
-                        res = be.domain_ip(args.IP, page=args.page)
+                        res = be.domain_ip(
+                            args.IP, page=args.page, max_pages=args.max_pages)
                     else:
                         res = be.host(args.IP)
-                    print(json.dumps(res, sort_keys=True, indent=4))
                 elif args.which == 'search':
                     if args.image:
-                        res = be.image_search(args.SEARCH, page=args.page)
+                        res = be.image_search(
+                            args.SEARCH, page=args.page, max_pages=args.max_pages)
                     elif args.domains:
-                        res = be.domain_search(args.SEARCH, page=args.page)
+                        res = be.domain_search(
+                            args.SEARCH, page=args.page, max_pages=args.max_pages)
                     else:
-                        res = be.host_search(args.SEARCH, page=args.page)
-                    print(json.dumps(res, sort_keys=True, indent=4))
+                        res = be.host_search(
+                            args.SEARCH, page=args.page, max_pages=args.max_pages)
                 elif args.which == 'dataleaks':
                     if args.domain:
                         res = be.dataleaks_organization(args.EMAIL)
                     else:
                         res = be.dataleaks_email(args.EMAIL)
-                    print(json.dumps(res, sort_keys=True, indent=4))
                 elif args.which == 'domain':
                     if args.subdomains:
-                        res = be.domain_subdomains(args.DOMAIN, page=args.page)
+                        res = be.domain_subdomains(
+                            args.DOMAIN, page=args.page, max_pages=args.max_pages)
                     else:
-                        res = be.domain_dns(args.DOMAIN, page=args.page)
-                    print(json.dumps(res, sort_keys=True, indent=4))
+                        res = be.domain_dns(
+                            args.DOMAIN, page=args.page, max_pages=args.max_pages)
+                jsonArgs = {'sort_keys': True,
+                            'indent': 4} if args.no_pretty else {}
+                if isinstance(res, Iterator):
+                    for paginated_result in res:
+                        print(json.dumps(paginated_result, **jsonArgs))
                 else:
-                    parser.print_help()
+                    print(json.dumps(res, **jsonArgs))
             except ValueError as e:
                 print('Invalid Value: %s' % e.message)
             except BinaryEdgeNotFound:
