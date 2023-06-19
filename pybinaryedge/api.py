@@ -512,11 +512,9 @@ class BinaryEdge(object):
 
 
 class BinaryEdgePaginated(BinaryEdge):
-    def _paginate(self, function: Callable, **
-                  kwargs) -> Iterator[Dict[str, Any]]:
-        args = kwargs['kwargs']
+    def _paginate(self, function: Callable, args: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
         start_page = args.get('page')
-        max_pages = args.get('max_pages')
+        max_pages = args.get('max_pages') + 1
         del args['max_pages']
         for page in range(start_page, max_pages):
             args['page'] = page
@@ -533,56 +531,56 @@ class BinaryEdgePaginated(BinaryEdge):
                      max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().image_search,
-            kwargs={'query': query, 'page': page, 'max_pages': max_pages}
+            args={'query': query, 'page': page, 'max_pages': max_pages}
         )
 
     def host_search(self, query: str, page: int = 1,
                     max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().host_search,
-            kwargs={'query': query, 'page': page, 'max_pages': max_pages}
+            args={'query': query, 'page': page, 'max_pages': max_pages}
         )
 
     def domain_subdomains(self, domain: str, page: int = 1,
                           max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().domain_subdomains,
-            kwargs={'domain': domain, 'page': page, 'max_pages': max_pages}
+            args={'domain': domain, 'page': page, 'max_pages': max_pages}
         )
 
     def domain_dns(self, domain: str, page: int = 1,
                    max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().domain_dns,
-            kwargs={'domain': domain, 'page': page, 'max_pages': max_pages}
+            args={'domain': domain, 'page': page, 'max_pages': max_pages}
         )
 
     def domain_ip(self, ip: str, page: int = 1,
                   max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().domain_ip,
-            kwargs={'ip': ip, 'page': page, 'max_pages': max_pages}
+            args={'ip': ip, 'page': page, 'max_pages': max_pages}
         )
 
     def domain_search(self, query: str, page: int = 1,
                       max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().domain_search,
-            kwargs={'query': query, 'page': page, 'max_pages': max_pages}
+            args={'query': query, 'page': page, 'max_pages': max_pages}
         )
 
     def sensor_search(self, query: str, page: int = 1,
                       max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().sensor_search,
-            kwargs={'query': query, 'page': page, 'max_pages': max_pages}
+            args={'query': query, 'page': page, 'max_pages': max_pages}
         )
 
     def stats(self, query: str, type: str, page: int = 1,
               max_pages: int = 0) -> Iterator[Dict[str, Any]]:
         return self._paginate(
             function=super().stats,
-            kwargs={
+            args={
                 'query': query,
                 'type': type,
                 'page': page,
