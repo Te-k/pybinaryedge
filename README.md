@@ -1,5 +1,9 @@
 # pybinaryedge
 
+![PyPI](https://img.shields.io/pypi/v/pybinaryedge)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pybinaryedge)
+![GitHub](https://img.shields.io/github/license/te-k/pybinaryedge)
+
 Python 3 Wrapper for the BinaryEdge API https://www.binaryedge.io/. See the [APIv2 documentation](https://docs.binaryedge.io/api-v2/) for more information, or the documentation for this library on [Read the Docs](https://pybinaryedge.readthedocs.io/en/latest/index.html).
 
 ## Installation
