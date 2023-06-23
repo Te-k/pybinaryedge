@@ -13,7 +13,8 @@
 """
 
 import ipaddress
-from typing import Any, Dict
+from typing import Any, Dict, Callable
+from collections.abc import Iterator
 
 import requests
 import urllib3
@@ -40,15 +41,15 @@ class BinaryEdgeNotFound(BinaryEdgeException):
 
 
 class BinaryEdge(object):
-    """
-    Initializes a new instance of the BinaryEdge class.
-
-    Args:
-        key: The BinaryEdge API key
-        verify: Enable or disable SSL verification. Default is enabled.
-    """
-
     def __init__(self, key: str, verify: bool = True):
+        """
+        Initializes a new instance of the BinaryEdge class.
+
+        Args:
+            key: The BinaryEdge API key
+            verify: Enable or disable SSL verification. Default is enabled.
+        """
+
         self.key = key
         self.base_url = 'https://api.binaryedge.io/v2/'
         self.ua = 'pybinaryedge https://github.com/Te-k/pybinaryedge'
@@ -87,13 +88,10 @@ class BinaryEdge(object):
         """
         try:
             return str(ipaddress.ip_address(ip))
-        except:  # noqa: E722
+        except ValueError:
             pass
 
-        try:
-            return str(ipaddress.ip_network(ip, strict=False))
-        except:  # noqa: E722
-            raise ValueError('Invalid IP address')
+        return str(ipaddress.ip_network(ip, strict=False))
 
     def host(self, ip: str) -> Dict[str, Any]:
         """
@@ -440,8 +438,8 @@ class BinaryEdge(object):
             be.sensor_search('tags:ssh_scanner')
         """
         return self._get(
-                'query/sensors/search',
-                params={'query': query, 'page': page}
+            'query/sensors/search',
+            params={'query': query, 'page': page}
         )
 
     def sensor_search_stats(self, query: str, type: str, days: int = 60) \
@@ -474,12 +472,12 @@ class BinaryEdge(object):
                         'ips', 'payloads', 'http_path']:
             raise BinaryEdgeException('Invalid type')
         return self._get(
-                'query/sensors/search/stats',
-                params={
-                    'query': query,
-                    'type': type,
-                    'days': days
-                }
+            'query/sensors/search/stats',
+            params={
+                'query': query,
+                'type': type,
+                'days': days
+            }
         )
 
     def stats(self, query: str, type: str, page: int = 1) -> Dict[str, Any]:
@@ -511,3 +509,80 @@ class BinaryEdge(object):
                 'page': page
             }
         )
+
+
+class BinaryEdgePaginated(BinaryEdge):
+    def _paginate(self, function: Callable,
+                  args: Dict[str, Any]) -> Iterator[Dict[str, Any]]:
+        start_page = args.get('page')
+        max_pages = args.get('max_pages') + 1
+        del args['max_pages']
+        for page in range(start_page, max_pages):
+            args['page'] = page
+            res = function(**args)
+            if 'events' not in res:
+                break
+            if len(res['events']) == 0:
+                break
+            if 'pagesize' not in res:
+                break
+            yield res
+
+    def image_search(self, query: str, page: int = 1,
+                     max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().image_search,
+            args={'query': query, 'page': page, 'max_pages': max_pages}
+        )
+
+    def host_search(self, query: str, page: int = 1,
+                    max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().host_search,
+            args={'query': query, 'page': page, 'max_pages': max_pages}
+        )
+
+    def domain_subdomains(self, domain: str, page: int = 1,
+                          max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().domain_subdomains,
+            args={'domain': domain, 'page': page, 'max_pages': max_pages}
+        )
+
+    def domain_dns(self, domain: str, page: int = 1,
+                   max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().domain_dns,
+            args={'domain': domain, 'page': page, 'max_pages': max_pages}
+        )
+
+    def domain_ip(self, ip: str, page: int = 1,
+                  max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().domain_ip,
+            args={'ip': ip, 'page': page, 'max_pages': max_pages}
+        )
+
+    def domain_search(self, query: str, page: int = 1,
+                      max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().domain_search,
+            args={'query': query, 'page': page, 'max_pages': max_pages}
+        )
+
+    def sensor_search(self, query: str, page: int = 1,
+                      max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().sensor_search,
+            args={'query': query, 'page': page, 'max_pages': max_pages}
+        )
+
+    def stats(self, query: str, type: str, page: int = 1,
+              max_pages: int = 0) -> Iterator[Dict[str, Any]]:
+        return self._paginate(
+            function=super().stats,
+            args={
+                'query': query,
+                'type': type,
+                'page': page,
+                'max_pages': max_pages})

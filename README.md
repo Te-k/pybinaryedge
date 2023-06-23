@@ -36,7 +36,7 @@ Example :
 ```python
 from pybinaryedge import BinaryEdge
 
-be = BinaryEdge(API_KEY)
+be = BinaryEdge('API_KEY')
 # Iterate over the first page of IPs having specific ssh configuration
 search = 'ssh.algorithms.encryption.keyword:"aes256-cbc" ssh.banner.keyword:"SSH-2.0-OpenSSH_LeadSec"'
 results = be.host_search(search)
@@ -65,18 +65,45 @@ List of functions implemented :
 * `sensor_ip(TARGET)`: [Details about an Scanner. List of recent events form the specified host, including details of scanned ports, payloads and tags.](https://docs.binaryedge.io/api-v2/#v2querysensorsiptarget)
 * `sensor_search(QUERY, PAGE)`: [Events based on a Query.](https://docs.binaryedge.io/api-v2/#v2querysensorssearch)
 * `sensor_search_status(QUERY, TYPE, DAYS)`: [Statistics of events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysensorssearchstats)
-: `stats(QUERY, TYPE, PAGE)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
+* `stats(QUERY, TYPE, PAGE)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
+
+## Pagination Support
+
+**Note:** BinaryEdge has a limit on pages. You can check the maximum page count in the API documentation. 
+
+Example :
+```python
+from pybinaryedge import BinaryEdgePaginated
+
+be = BinaryEdgePaginated('YOUR_API_KEY')
+
+search = 'ssh.algorithms.encryption.keyword:"aes256-cbc" ssh.banner.keyword:"SSH-2.0-OpenSSH_LeadSec"'
+for results in be.host_search(query=search, page=1, max_pages=10):
+    for event in results['events']:
+        print("%s" %(event['target']['ip']))
+```
+
+Supported pagination methods:
+* `host_search(QUERY, PAGE, MAX_PAGES)` : [List of recent events for the given query](https://docs.binaryedge.io/api-v2/#v2querysearch)
+* `image_search(QUERY, PAGE, MAX_PAGES)` : [Remote Desktops based on a Query](https://docs.binaryedge.io/api-v2/#v2queryimagesearch)
+* `domain_subdomains(DOMAIN, PAGE, MAX_PAGES)` : [Return list of subdomains known from the target domain](https://docs.binaryedge.io/api-v2/#v2querydomainssubdomaintarget)
+* `domain_dns(DOMAIN, PAGE, MAX_PAGES)` : [Return list of dns results known from the target domain.](https://docs.binaryedge.io/api-v2/#v2querydomainsdnstarget)
+* `domain_search(QUERY, PAGE, MAX_PAGES)`: [List of Domains/DNS data based on a Query](https://docs.binaryedge.io/api-v2/#v2querydomainssearch)
+* `domain_ip(IP, PAGE, MAX_PAGES)`: [Return records that have the specified IP in their A or AAAA records.](https://docs.binaryedge.io/api-v2/#v2querydomainsiptarget)
+* `sensor_search(QUERY, PAGE, MAX_PAGES)`: [Events based on a Query.](https://docs.binaryedge.io/api-v2/#v2querysensorssearch)
+* `stats(QUERY, TYPE, PAGE, MAX_PAGES)`: [Statistics of recent events for the given query.](https://docs.binaryedge.io/api-v2/#v2querysearchstats)
+
 
 ## CLI
 
 This library also implements a CLI binaryedge tool :
 ```
-usage: binaryedge [-h] {config,ip,search,dataleaks} ...
+usage: binaryedge [-h] [--no-verify] [--no-pretty] {config,ip,search,dataleaks,domains} ...
 
 Request BinaryEdge API
 
 positional arguments:
-  {config,ip,search,dataleaks}
+  {config,ip,search,dataleaks,domains}
                         Commands
     config              Configure pybinary edge
     ip                  Query an IP address
@@ -84,8 +111,10 @@ positional arguments:
     dataleaks           Search in the leaks database
     domains             Search information on a domain
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  --no-verify           Disable SSL verification
+  --no-pretty           Non-prettified output
 ```
 
 Example :
